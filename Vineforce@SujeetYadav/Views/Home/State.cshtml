@@ -1,0 +1,167 @@
+﻿
+@{
+    ViewBag.Title = "State";
+}
+
+<h2>State</h2>
+
+<script>
+    $(document).ready(function () {
+        GetCountries();        
+    });
+    function SaveState(e) {
+        if ($('#DropDownCountry').val() == "") {
+            alert("Please select country.");
+            return false;
+        }
+        var formData = new FormData();
+        formData.append("countryID", $("#DropDownCountry").val());
+        formData.append("stateID", $("#StateID").val());
+        formData.append("state", $("#State").val());
+
+        $.ajax({
+            url: '@Url.Action("SaveState", "Home", new { Area = "" })',
+            type: 'POST',
+            processData: false,
+            contentType: false,
+            data: formData,
+            success: function (data) {
+                $("#StateID").val("");
+                $("#State").val("");
+                $("#SaveUpdateState").text("Save");
+                GetStates();
+            },
+            error: function (errorThrown) {
+
+            }
+        });
+    }
+
+    function GetCountries() {
+        $.ajax({
+            url: '@Url.Action("GetCountries", "Home", new { Area = "" })',
+            type: 'POST',
+            processData: false,
+            contentType: false,
+            success: function (data) {
+                $("#DropDownCountry").empty();
+                for (i = 0; i < data.length; i++) {
+                    // Adding a row inside the tbody.
+                    if (i == 0) {
+                        $('#DropDownCountry').append(`<option selected value="${data[i].countryID}">${data[i].country}</option>`);
+                    } else {
+                        $('#DropDownCountry').append(`<option value="${data[i].countryID}">${data[i].country}</option>`);
+                    }
+                }
+                GetStates();
+            },
+            error: function (errorThrown) {
+            }
+        });
+    }
+
+
+    function GetStates() {
+        var formData = new FormData();
+        formData.append("countryID", $("#DropDownCountry").val());
+        $.ajax({
+            url: '@Url.Action("GetStates", "Home", new { Area = "" })',
+            type: 'POST',
+            processData: false,
+            contentType: false,
+            data: formData,
+            success: function (data) {
+                $("#tbodyState").empty();
+                debugger;
+                for (i = 0; i < data.length; i++) {
+                    // Adding a row inside the tbody.
+                    $('#tbodyState').append(`<tr>
+                          <td class="text-center">
+                            <button class="btn btn-warning"
+                                type="button" stateid = "${data[i].stateID}" state = "${data[i].state}" onclick="EditState(event)"><i class="fa fa-edit"></i> Edit</button>
+                            </td>
+                            <td class="text-center">
+                            <button class="btn btn-danger remove"
+                                type="button" stateid = "${data[i].stateID}" onclick="DeleteState(event)"><i class="fa fa-remove"></i> Remove</button>
+                            </td>
+                            <td class="row-index text-center">
+                                <p>${data[i].state}</p>
+                            </td>
+                           </tr>`);
+                }
+            },
+            error: function (errorThrown) {
+            }
+        });
+    }
+
+    function EditState(e) {
+        $("#StateID").val(e.currentTarget.attributes.stateid.value);
+        $("#State").val(e.currentTarget.attributes.state.value);
+        $("#SaveUpdateState").text("Update");
+    }
+
+    function DeleteState(e) {
+        let text = "Are you sure to delete record?";
+        if (confirm(text) == true) {
+            var formData = new FormData();
+            formData.append("stateID", e.currentTarget.attributes.stateid.value);
+            $.ajax({
+                url: '@Url.Action("DeleteState", "Home", new { Area = "" })',
+                type: 'POST',
+                processData: false,
+                contentType: false,
+                data: formData,
+                success: function (data) {
+                    GetCountries();
+                },
+                error: function (errorThrown) {
+                }
+            });
+        }
+    }
+</script>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-3">
+            <div>
+                <label class="control-label">Country</label>
+            </div>
+            <div>
+                <select id='DropDownCountry' style="width:100%; height:25px;" onchange="GetStates()"></select>
+            </div>
+        </div>
+        <div class="col-md-9">
+            <div>
+                <label class="control-label">State</label>
+            </div>
+            <div>
+                @Html.Hidden("StateID")
+                @Html.TextBox("State")
+                <button type="button" id="SaveUpdateState" onclick="SaveState(event)">Save</button>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        
+    </div>
+    <hr />
+    <div class="row">
+
+        <div id="DivCountries"><h2>Country</h2></div>
+        <div class="table-responsive">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th class="text-center">Update</th>
+                        <th class="text-center">Delete</th>
+                        <th class="text-center">Name</th>
+                    </tr>
+                </thead>
+                <tbody id="tbodyState"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+

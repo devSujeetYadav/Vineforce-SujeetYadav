@@ -1,0 +1,6 @@
+C:\Users\Api\Desktop\Test\Vineforce@SujeetYadav\Model\bin\Debug\Model.dll
+C:\Users\Api\Desktop\Test\Vineforce@SujeetYadav\Model\bin\Debug\Model.pdb
+C:\Users\Api\Desktop\Test\Vineforce@SujeetYadav\Model\obj\Debug\Model.csprojAssemblyReference.cache
+C:\Users\Api\Desktop\Test\Vineforce@SujeetYadav\Model\obj\Debug\Model.csproj.CoreCompileInputs.cache
+C:\Users\Api\Desktop\Test\Vineforce@SujeetYadav\Model\obj\Debug\Model.dll
+C:\Users\Api\Desktop\Test\Vineforce@SujeetYadav\Model\obj\Debug\Model.pdb

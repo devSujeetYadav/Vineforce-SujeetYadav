@@ -1,0 +1,120 @@
+﻿
+@{
+    ViewBag.Title = "Country";
+}
+
+<h2>Country</h2>
+<script>
+    $(document).ready(function () {
+        GetCountries();
+    });
+    function SaveCountry(e) {
+        var formData = new FormData();
+        formData.append("countryID", $("#CountryID").val());
+        formData.append("country", $("#Country").val());
+
+        $.ajax({
+            url: '@Url.Action("SaveCountry", "Home", new { Area = "" })',
+            type: 'POST',
+            processData: false,
+            contentType: false,
+            data: formData,
+            success: function (data) {
+                $("#CountryID").val("");
+                $("#Country").val("");
+                $("#SaveUpdateCountry").text("Save");
+                GetCountries();
+            },
+            error: function (errorThrown) {
+                
+            }
+        });
+    }
+
+    function GetCountries() {
+        $.ajax({
+            url: '@Url.Action("GetCountries", "Home", new { Area = "" })',
+            type: 'POST',
+            processData: false,
+            contentType: false,
+            success: function (data) {
+                $("#tbody").empty();
+                for (i = 0; i < data.length; i++) {
+                    // Adding a row inside the tbody.
+                    $('#tbody').append(`<tr>
+                          <td class="text-center">
+                            <button class="btn btn-warning"
+                                type="button" countryid = "${data[i].countryID}" country = "${data[i].country}" onclick="EditCountry(event)"><i class="fa fa-edit"></i> Edit</button>
+                            </td>
+                            <td class="text-center">
+                            <button class="btn btn-danger remove"
+                                type="button" countryid = "${data[i].countryID}" onclick="DeleteCountry(event)"><i class="fa fa-remove"></i> Remove</button>
+                            </td>
+                            <td class="row-index text-center">
+                                <p>${data[i].country}</p>
+                            </td>
+                           </tr>`);
+                }
+            },
+            error: function (errorThrown) {
+            }
+        });
+    }
+
+    function EditCountry(e) {
+        $("#CountryID").val(e.currentTarget.attributes.countryid.value);
+        $("#Country").val(e.currentTarget.attributes.country.value);
+        $("#SaveUpdateCountry").text("Update");
+    }
+
+    function DeleteCountry(e) {
+        let text = "Are you sure to delete record?";
+        if (confirm(text) == true) {
+            var formData = new FormData();
+            formData.append("countryID", e.currentTarget.attributes.countryid.value);
+            $.ajax({
+                url: '@Url.Action("DeleteCounty", "Home", new { Area = "" })',
+                type: 'POST',
+                processData: false,
+                contentType: false,
+                data: formData,
+                success: function (data) {
+                    GetCountries();
+                },
+                error: function (errorThrown) {
+                }
+            });
+        }
+    }
+</script>
+<div class="container-fluid">
+    <div class="row">
+        <div>
+            <label class="control-label">Country</label>
+        </div>
+    </div>
+    <div class="row">
+        <div>
+            @Html.Hidden("CountryID")
+            @Html.TextBox("Country")
+            <button type="button" id="SaveUpdateCountry" onclick="SaveCountry(event)">Save</button>
+        </div>
+    </div>
+    <hr />
+    <div class="row">
+        
+        <div id="DivCountries"><h2>Country</h2></div>
+        <div class="table-responsive">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th class="text-center">Update</th>
+                        <th class="text-center">Delete</th>
+                        <th class="text-center">Name</th>
+                    </tr>
+                </thead>
+                <tbody id="tbody"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
